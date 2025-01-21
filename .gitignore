@@ -2,3 +2,4 @@ cmds
 *.exe
 *.out
 *.sh
+.vscode
