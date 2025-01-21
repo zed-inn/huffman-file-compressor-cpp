@@ -3,3 +3,4 @@ cmds
 *.out
 *.sh
 .vscode
+test
