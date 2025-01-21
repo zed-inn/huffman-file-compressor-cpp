@@ -1,4 +1,3 @@
-#include <bits/stdc++.h>
 #include "utils/file.h"
 
 using namespace std;

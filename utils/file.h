@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <map>
 #include "strings.h"
 #include "sort.h"
 

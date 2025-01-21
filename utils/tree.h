@@ -1,5 +1,3 @@
-#include<bits/stdc++.h>
-
 class Binary_Tree
 {
 public:

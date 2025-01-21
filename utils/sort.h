@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <vector>
 #include "tree.h"
 
 using namespace std;
@@ -13,7 +13,8 @@ void quicksort(vpci &char_chart)
 
     pci pivot = char_chart[0];
 
-    vpci less, greater, equal;
+    vpci less, greater;
+    int equals = 0;
 
     for (auto &x : char_chart)
     {
@@ -22,7 +23,7 @@ void quicksort(vpci &char_chart)
         else if (x.second < pivot.second)
             less.push_back(x);
         else
-            equal.push_back(x);
+            equals++;
     }
 
     quicksort(less);
@@ -31,12 +32,13 @@ void quicksort(vpci &char_chart)
     int k = 0;
     for (auto &x : less)
         char_chart[k++] = x;
-    for (auto &x : equal)
-        char_chart[k++] = x;
+    for (int i = 0; i < equals; i++)
+        char_chart[k++] = pivot;
     for (auto &x : greater)
         char_chart[k++] = x;
 }
 
-Binary_Tree generate_huffman_tree(vpci &char_chart){
-    // TODO: create a huffman tree/table
+Binary_Tree generate_huffman_tree(vpci &char_chart)
+{
+    // TODO
 }
