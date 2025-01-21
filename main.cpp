@@ -10,9 +10,12 @@ int main(int argc, char *argv[])
     File f(file_to_compress);
     f.open();
 
-    string s;
-    while (getline(f.file, s))
-        cout << s << endl;
+    vpci char_chart = f.get_char_chart();
+
+    for (auto &x : char_chart)
+    {
+        cout << "{ " << x.first << " , " << x.second << " }" << endl;
+    }
 
     f.close();
 

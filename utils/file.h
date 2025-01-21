@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "strings.h"
+#include "sort.h"
 
 using namespace std;
 
@@ -48,6 +49,26 @@ public:
             file.close();
             exit(1);
         }
+    }
+
+    vpci get_char_chart()
+    {
+        map<char, int> char_chart_map;
+
+        string s;
+        while (getline(file, s))
+        {
+            for (int i = 0; i < s.length(); i++)
+                char_chart_map[s[i]] += 1;
+        }
+
+        vpci char_chart;
+        for (auto &x : char_chart_map)
+            char_chart.push_back(x);
+
+        quicksort(char_chart);
+
+        return char_chart;
     }
 
     void close()
