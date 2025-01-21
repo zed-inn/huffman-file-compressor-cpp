@@ -16,18 +16,32 @@ void quicksort(vpci &char_chart)
     vpci less, greater;
     int equals = 0;
 
+    bool greater_sorted = true, less_sorted = true;
+
     for (auto &x : char_chart)
     {
         if (x.second > pivot.second)
+        {
+            // also check if the greater or less are sorted already
+            if (greater_sorted && (greater.size() > 0) && (x.second < greater[greater.size() - 1].second))
+                greater_sorted = false;
             greater.push_back(x);
+        }
         else if (x.second < pivot.second)
+        {
+            if (less_sorted && (less.size() > 0) && (x.second < less[less.size() - 1].second))
+                less_sorted = false;
             less.push_back(x);
+        }
         else
             equals++;
     }
 
-    quicksort(less);
-    quicksort(greater);
+    // so we don't have to sort those that are already sorted
+    if (!less_sorted)
+        quicksort(less);
+    if (!greater_sorted)
+        quicksort(greater);
 
     int k = 0;
     for (auto &x : less)
@@ -40,5 +54,4 @@ void quicksort(vpci &char_chart)
 
 Binary_Tree generate_huffman_tree(vpci &char_chart)
 {
-    // TODO
 }
