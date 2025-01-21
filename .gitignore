@@ -1,6 +1,11 @@
+# commands to more easily run cpp programs
 cmds
+
+# files that gets created due to compilation
 *.exe
 *.out
+
+# files that are system made
 *.sh
 .vscode
 test
