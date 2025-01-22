@@ -4,8 +4,6 @@
 #include "strings.h"
 #include "sort.h"
 
-using namespace std;
-
 string get_directory(string file_location)
 {
     file_location = replace_all_instances(file_location, '\\', '/');

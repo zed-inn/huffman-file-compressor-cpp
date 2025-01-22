@@ -1,10 +1,4 @@
-#include <vector>
 #include "tree.h"
-
-using namespace std;
-
-typedef pair<char, int> pci;
-typedef vector<pci> vpci;
 
 void quicksort(vpci &char_chart)
 {
@@ -52,6 +46,15 @@ void quicksort(vpci &char_chart)
         char_chart[k++] = x;
 }
 
-Binary_Tree generate_huffman_tree(vpci &char_chart)
+Binary_Tree *generate_huffman_tree(vpci &char_chart)
 {
+    if (char_chart.size() == 1)
+    {
+        Binary_Tree *head = new Binary_Tree(char_chart[0]);
+        return head;
+    }
+    else if (char_chart.size() <= 0)
+        return nullptr;
+
+    // TODO make huffman tree for char chart
 }
