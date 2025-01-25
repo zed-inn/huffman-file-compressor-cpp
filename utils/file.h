@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <bitset>
 #include "strings.h"
 #include "sort.h"
+#include "../constants/constants.h"
 
 string get_directory(string file_location)
 {
@@ -35,10 +37,12 @@ class File
 {
 private:
     string filename = "";
+    string write_filename = "";
 
 public:
     ifstream file;
-    File(string filename) : filename(filename) {}
+    ofstream write_file;
+    File(string filename) : filename(filename), write_filename(filename + '.' + FILE_EXTENSION) {}
 
     void open()
     {
@@ -74,5 +78,46 @@ public:
     void close()
     {
         file.close();
+    }
+
+    void write_char_chart(mcs &char_chart)
+    {
+        write_file.open(write_filename, ios::trunc);
+        if (!write_file)
+        {
+            cout << "Couldn't write in file" << endl;
+            exit(1);
+        }
+
+        write_file << char_chart.size() << endl;
+        for (auto &x : char_chart)
+            write_file << x.first << " " << x.second << endl;
+
+        write_file.close();
+    }
+
+    void save(mcs &char_chart)
+    {
+        write_char_chart(char_chart);
+
+        write_file.open(write_filename, ios::app | ios::binary);
+
+        string line;
+        while (getline(file, line))
+        {
+            string new_line = "";
+            for (auto i : line)
+                new_line += char_chart[i];
+
+            for (int i = 0; i < new_line.length(); i += 8)
+            {
+                bitset<8> char_in_bits(new_line.substr(i, 8));
+                char character = static_cast<char>(char_in_bits.to_ulong());
+                write_file << character;
+            }
+            write_file << endl;
+        }
+
+        write_file.close();
     }
 };
