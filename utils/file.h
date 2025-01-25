@@ -96,7 +96,7 @@ public:
         write_file.close();
     }
 
-    void save(mcs &char_chart)
+    void save_compression(mcs &char_chart)
     {
         write_char_chart(char_chart);
 
@@ -109,6 +109,7 @@ public:
             for (auto i : line)
                 new_line += char_chart[i];
 
+            write_file << new_line.length() << endl;
             for (int i = 0; i < new_line.length(); i += 8)
             {
                 bitset<8> char_in_bits(new_line.substr(i, 8));
