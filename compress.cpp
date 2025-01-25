@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     f.open();
 
-    f.save(char_to_binary);
+    f.save_compression(char_to_binary);
 
     f.close();
 
