@@ -100,7 +100,7 @@ public:
     {
         write_char_chart(char_chart);
 
-        write_file.open(write_filename, ios::app | ios::binary);
+        write_file.open(write_filename, ios::app);
 
         string line;
         while (getline(file, line))
