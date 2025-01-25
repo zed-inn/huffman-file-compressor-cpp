@@ -1,6 +1,6 @@
 #include "tree.h"
 
-typedef vector<Binary_Tree> vbt;
+typedef vector<Binary_Tree *> vbt;
 
 void quicksort(vpci &char_chart)
 {
@@ -52,7 +52,7 @@ void quicksort(vbt &tree)
     if (tree.size() <= 1)
         return;
 
-    pci pivot = tree[0].value;
+    pci pivot = tree[0]->value;
 
     vbt less, greater, equals;
 
@@ -60,16 +60,16 @@ void quicksort(vbt &tree)
 
     for (auto &x : tree)
     {
-        if (x.value.second > pivot.second)
+        if (x->value.second > pivot.second)
         {
             // also check if the greater or less are sorted already
-            if (greater_sorted && (greater.size() > 0) && (x.value.second < greater[greater.size() - 1].value.second))
+            if (greater_sorted && (greater.size() > 0) && (x->value.second < greater[greater.size() - 1]->value.second))
                 greater_sorted = false;
             greater.push_back(x);
         }
-        else if (x.value.second < pivot.second)
+        else if (x->value.second < pivot.second)
         {
-            if (less_sorted && (less.size() > 0) && (x.value.second < less[less.size() - 1].value.second))
+            if (less_sorted && (less.size() > 0) && (x->value.second < less[less.size() - 1]->value.second))
                 less_sorted = false;
             less.push_back(x);
         }
@@ -98,11 +98,39 @@ vbt convert_to_binary_tree(vpci &char_chart)
     for (auto &x : char_chart)
     {
         Binary_Tree *t = new Binary_Tree(x);
-        values.push_back(x);
+        values.push_back(t);
     }
     return values;
 }
 
-Binary_Tree * generate_huffman_tree(vbt tree){
-    
+Binary_Tree *generate_huffman_tree(vbt tree)
+{
+    if (tree.size() == 1)
+    {
+        Binary_Tree *t = new Binary_Tree();
+        t->left = tree[0];
+        return t;
+    }
+    else if (tree.size() < 1)
+        return new Binary_Tree();
+
+    int sum = tree[0]->value.second + tree[1]->value.second;
+    pci value{'\0', sum};
+    Binary_Tree *t = new Binary_Tree(value);
+    t->left = tree[0];
+    t->right = tree[1];
+
+    tree.erase(tree.begin());
+    tree[0] = t;
+
+    quicksort(tree);
+
+    if (tree.size() == 1)
+    {
+        return t;
+    }
+
+    Binary_Tree *head = generate_huffman_tree(tree);
+
+    return head;
 }

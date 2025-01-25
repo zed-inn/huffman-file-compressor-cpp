@@ -9,9 +9,18 @@ int main(int argc, char *argv[])
 
     vpci char_chart = f.get_char_chart();
 
-    for (auto &x : char_chart)
+    vbt tree = convert_to_binary_tree(char_chart);
+    Binary_Tree *head = generate_huffman_tree(tree);
+
+    mcs char_to_binary_string;
+
+    put_values(head, char_to_binary_string, "");
+
+    int i = 0;
+    for (auto &x : char_to_binary_string)
     {
         cout << "{ " << x.first << " , " << x.second << " }" << endl;
+        i++;
     }
 
     f.close();
