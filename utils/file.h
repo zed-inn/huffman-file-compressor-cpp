@@ -109,11 +109,16 @@ public:
             for (auto i : line)
                 new_line += char_chart[i];
 
-            write_file << new_line.length() << endl;
+            // pad if length not multiple of 8
+            short padding = (8 - (new_line.length() % 8)) % 8;
+            for (short i = 0; i < padding; i++)
+                new_line += '0';
+
+            write_file << padding << '\n';
             for (int i = 0; i < new_line.length(); i += 8)
             {
                 bitset<8> char_in_bits(new_line.substr(i, 8));
-                char character = static_cast<char>(char_in_bits.to_ulong());
+                unsigned char character = static_cast<unsigned char>(char_in_bits.to_ulong());
                 write_file << character;
             }
             write_file << endl;
