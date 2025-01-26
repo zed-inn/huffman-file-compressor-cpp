@@ -92,16 +92,40 @@ namespace compress
                 exit(1);
             }
 
-            write_file << char_chart.size() << endl;
+            bitset<8> to_bits;
             int pad = 0;
+
+            string chart;
             for (auto &x : char_chart)
             {
                 pad += (x.second.length() * char_chart_in_num[x.first]) % 8;
-                write_file << x.first << " " << x.second << '\n';
+                to_bits = x.first;
+                chart += to_bits.to_string();
+                to_bits = ' ';
+                chart += to_bits.to_string();
+                chart += x.second;
+                to_bits = '\n';
+                chart += to_bits.to_string();
             }
 
+            int chart_padding = (8 - (chart.length() % 8)) % 8;
+            for (int i = 0; i < chart_padding; i++)
+                chart += '0';
+
+            write_file << chart.length() / 8 << ' ';
+            write_file << chart_padding << ' ';
+            while (chart.length() > 0)
+            {
+                bitset<8> string_to_bits(chart.substr(0, 8));
+                unsigned char ch = static_cast<unsigned char>(string_to_bits.to_ulong());
+                write_file << ch;
+                chart.erase(0, 8);
+            }
+            write_file << ' ';
+
             padding = (8 - (pad % 8)) % 8;
-            write_file << padding << endl;
+            write_file << padding;
+            write_file << ' ';
 
             write_file.close();
         }
