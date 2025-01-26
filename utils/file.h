@@ -33,97 +33,111 @@ string get_filename(int argc, char *argv[])
     return argv[1];
 }
 
-class File
+namespace compress
 {
-private:
-    string filename = "";
-    string write_filename = "";
-
-public:
-    ifstream file;
-    ofstream write_file;
-    File(string filename) : filename(filename), write_filename(filename + '.' + FILE_EXTENSION) {}
-
-    void open()
+    class File
     {
-        file.open(filename);
-        if (!file.is_open())
+    private:
+        string filename = "";
+        string write_filename = "";
+        short padding = 0;
+        mci char_chart_in_num;
+
+    public:
+        ifstream file;
+        ofstream write_file;
+        File(string filename) : filename(filename), write_filename(filename + '.' + FILE_EXTENSION) {}
+
+        void open()
         {
-            cout << "File doesn't exist, check location and name then try again" << endl;
-            file.close();
-            exit(1);
-        }
-    }
-
-    vpci get_char_chart()
-    {
-        map<char, int> char_chart_map;
-
-        string s;
-        while (getline(file, s))
-        {
-            for (int i = 0; i < s.length(); i++)
-                char_chart_map[s[i]] += 1;
-        }
-
-        vpci char_chart;
-        for (auto &x : char_chart_map)
-            char_chart.push_back(x);
-
-        quicksort(char_chart);
-
-        return char_chart;
-    }
-
-    void close()
-    {
-        file.close();
-    }
-
-    void write_char_chart(mcs &char_chart)
-    {
-        write_file.open(write_filename, ios::trunc);
-        if (!write_file)
-        {
-            cout << "Couldn't write in file" << endl;
-            exit(1);
-        }
-
-        write_file << char_chart.size() << endl;
-        for (auto &x : char_chart)
-            write_file << x.first << " " << x.second << endl;
-
-        write_file.close();
-    }
-
-    void save_compression(mcs &char_chart)
-    {
-        write_char_chart(char_chart);
-
-        write_file.open(write_filename, ios::app);
-
-        string line;
-        while (getline(file, line))
-        {
-            string new_line = "";
-            for (auto i : line)
-                new_line += char_chart[i];
-
-            // pad if length not multiple of 8
-            short padding = (8 - (new_line.length() % 8)) % 8;
-            for (short i = 0; i < padding; i++)
-                new_line += '0';
-
-            write_file << padding << '\n';
-            for (int i = 0; i < new_line.length(); i += 8)
+            file.open(filename);
+            if (!file.is_open())
             {
-                bitset<8> char_in_bits(new_line.substr(i, 8));
+                cout << "File doesn't exist, check location and name then try again" << endl;
+                file.close();
+                exit(1);
+            }
+        }
+
+        vpci get_char_chart()
+        {
+            mci char_chart_map;
+
+            char ch;
+            while (file.get(ch))
+                char_chart_map[ch] += 1;
+
+            char_chart_in_num = char_chart_map;
+
+            vpci char_chart;
+            for (auto &x : char_chart_map)
+                char_chart.push_back(x);
+
+            quicksort(char_chart);
+
+            return char_chart;
+        }
+
+        void close()
+        {
+            file.close();
+        }
+
+        void write_char_chart(mcs &char_chart)
+        {
+            write_file.open(write_filename, ios::trunc);
+            if (!write_file)
+            {
+                cout << "Couldn't write in file" << endl;
+                exit(1);
+            }
+
+            write_file << char_chart.size() << endl;
+            int pad = 0;
+            for (auto &x : char_chart)
+            {
+                pad += (x.second.length() * char_chart_in_num[x.first]) % 8;
+                write_file << x.first << " " << x.second << '\n';
+            }
+
+            padding = (8 - (pad % 8)) % 8;
+            write_file << padding << endl;
+
+            write_file.close();
+        }
+
+        void save_compression(mcs &char_chart)
+        {
+            write_char_chart(char_chart);
+
+            write_file.open(write_filename, ios::app);
+
+            string line;
+            char ch;
+            while (file.get(ch))
+            {
+                line += char_chart[ch];
+
+                if (line.length() >= 8)
+                {
+                    bitset<8> char_in_bits(line.substr(0, 8));
+                    unsigned char character = static_cast<unsigned char>(char_in_bits.to_ulong());
+                    write_file << character;
+                    line.erase(0, 8);
+                }
+            }
+            for (short i = 0; i < padding; i++)
+                line += '0';
+
+            if (line.length() >= 8)
+            {
+                bitset<8> char_in_bits(line.substr(0, 8));
                 unsigned char character = static_cast<unsigned char>(char_in_bits.to_ulong());
                 write_file << character;
+                line.erase(0, 8);
             }
-            write_file << endl;
-        }
 
-        write_file.close();
-    }
-};
+            write_file.close();
+        }
+    };
+}

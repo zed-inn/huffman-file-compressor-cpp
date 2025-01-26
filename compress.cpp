@@ -1,5 +1,7 @@
 #include "utils/file.h"
 
+using namespace compress;
+
 int main(int argc, char *argv[])
 {
     string file_to_compress = get_filename(argc, argv);
