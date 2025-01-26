@@ -101,7 +101,7 @@ namespace compress
                 pad += (x.second.length() * char_chart_in_num[x.first]) % 8;
                 to_bits = x.first;
                 chart += to_bits.to_string();
-                to_bits = ' ';
+                to_bits = x.second.length();
                 chart += to_bits.to_string();
                 chart += x.second;
                 to_bits = '\n';
@@ -113,7 +113,7 @@ namespace compress
                 chart += '0';
 
             write_file << chart.length() / 8 << ' ';
-            write_file << chart_padding << ' ';
+            write_file << chart_padding;
             while (chart.length() > 0)
             {
                 bitset<8> string_to_bits(chart.substr(0, 8));
@@ -121,11 +121,9 @@ namespace compress
                 write_file << ch;
                 chart.erase(0, 8);
             }
-            write_file << ' ';
 
             padding = (8 - (pad % 8)) % 8;
             write_file << padding;
-            write_file << ' ';
 
             write_file.close();
         }
