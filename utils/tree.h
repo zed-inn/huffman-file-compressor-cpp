@@ -7,6 +7,7 @@ using namespace std;
 typedef pair<char, int> pci;
 typedef vector<pci> vpci;
 typedef map<char, string> mcs;
+typedef map<char, int> mci;
 
 class Binary_Tree
 {
