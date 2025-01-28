@@ -1,6 +1,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "../constants/constants.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void put_values(Binary_Tree *t, mcs &m, string binary)
     }
 
     if (t->left != nullptr)
-        put_values(t->left, m, binary + '0');
+        put_values(t->left, m, binary + LEFT);
     if (t->right != nullptr)
-        put_values(t->right, m, binary + '1');
+        put_values(t->right, m, binary + RIGHT);
 }
