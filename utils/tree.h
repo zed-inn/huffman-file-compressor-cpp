@@ -6,7 +6,9 @@
 using namespace std;
 
 typedef pair<char, int> pci;
+typedef pair<char, string> pcs;
 typedef vector<pci> vpci;
+typedef vector<pcs> vpcs;
 typedef map<char, string> mcs;
 typedef map<char, int> mci;
 
