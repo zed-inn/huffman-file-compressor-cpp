@@ -1,29 +1,20 @@
-#include "utils/file.h"
+#include "./utils/file.h"
+#include "./headers/common.h"
+#include "./headers/namespace.h"
 
-using namespace compress;
+using namespace Huffman;
 
-int main(int argc, char *argv[])
+int main()
 {
-    string file_to_compress = get_filename(argc, argv);
+    string filename = "./test/exm.txt";
 
-    File f(file_to_compress);
-    f.open();
+    File f(filename);
 
-    vpci char_chart = f.get_char_chart();
-    f.close();
+    cout << f.open() << endl;
+    cout << f.open() << endl;
 
-    vbt tree = convert_to_binary_tree(char_chart);
-    Binary_Tree *head = generate_huffman_tree(tree);
-
-    mcs char_to_binary;
-
-    put_values(head, char_to_binary, "");
-
-    f.open();
-
-    f.save_compression(char_to_binary);
-
-    f.close();
+    cout << f.close() << endl;
+    cout << f.close() << endl;
 
     return 0;
 }
