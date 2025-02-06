@@ -6,7 +6,7 @@ using namespace Huffman;
 
 int main()
 {
-    string filename = "./test/exm.txt";
+    string filename = "./test/exm.txt"; // test file
 
     File f(filename);
 
