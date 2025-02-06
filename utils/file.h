@@ -1,4 +1,5 @@
 #include "../headers/common.h"
+#include "../headers/types.h"
 #include "../headers/namespace.h"
 
 #ifndef FILE_H
@@ -11,6 +12,18 @@ namespace Huffman
     private:
         ifstream f;
         ofstream f_out;
+
+        dict_ci get_chart_map()
+        {
+            dict_ci chart_map;
+
+            string line;
+            while (getline(f, line))
+                for (char i : line)
+                    chart_map[i] += 1;
+
+            return chart_map;
+        }
 
     public:
         string input_filename;
@@ -33,10 +46,16 @@ namespace Huffman
         bool open()
         {
             if (f.is_open())
+            {
+                cout << "File is already open" << endl;
                 return false;
+            }
 
             if (input_filename.length() == 0)
+            {
+                cout << "No input filename" << endl;
                 return false;
+            }
 
             f.open(input_filename);
             return true;
@@ -46,9 +65,28 @@ namespace Huffman
         bool close()
         {
             if (!f.is_open())
+            {
+                cout << "File is already close" << endl;
                 return false;
+            }
 
             f.close();
+            return true;
+        }
+
+        bool compress()
+        {
+            if (!f.is_open())
+            {
+                cout << "File is not open" << endl;
+                return false;
+            }
+
+            dict_ci chart_map = get_chart_map();
+
+            for (auto x : chart_map)
+                cout << x.first << " " << x.second << endl;
+
             return true;
         }
     };

@@ -10,11 +10,11 @@ int main()
 
     File f(filename);
 
-    cout << f.open() << endl;
-    cout << f.open() << endl;
+    f.open();
 
-    cout << f.close() << endl;
-    cout << f.close() << endl;
+    f.compress();
+
+    f.close();
 
     return 0;
 }
