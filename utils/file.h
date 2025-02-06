@@ -13,14 +13,18 @@ namespace Huffman
         ifstream f;
         ofstream f_out;
 
-        dict_ci get_chart_map()
+        vpci get_chart_map()
         {
-            dict_ci chart_map;
+            mci chart_map_dict;
 
             string line;
             while (getline(f, line))
                 for (char i : line)
-                    chart_map[i] += 1;
+                    chart_map_dict[i] += 1;
+
+            vpci chart_map;
+            for (auto &x : chart_map_dict)
+                chart_map.push_back(x);
 
             return chart_map;
         }
@@ -82,9 +86,9 @@ namespace Huffman
                 return false;
             }
 
-            dict_ci chart_map = get_chart_map();
+            vpci chart_map = get_chart_map();
 
-            for (auto x : chart_map)
+            for (auto &x : chart_map)
                 cout << x.first << " " << x.second << endl;
 
             return true;

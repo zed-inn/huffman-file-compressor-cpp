@@ -4,7 +4,9 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-typedef unordered_set<char> list_c;
-typedef unordered_map<char, int> dict_ci;
+typedef pair<char, int> pci;
+typedef unordered_set<char> usc;
+typedef unordered_map<char, int> mci;
+typedef vector<pair<char, int>> vpci;
 
 #endif
