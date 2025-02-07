@@ -1,5 +1,6 @@
 #include "../headers/common.h"
 #include "../headers/types.h"
+#include "../headers/dsa.h"
 #include "../headers/namespace.h"
 
 #ifndef FILE_H
@@ -13,20 +14,21 @@ namespace Huffman
         ifstream f;
         ofstream f_out;
 
-        vpci get_chart_map()
+        vpci get_char_chart()
         {
-            mci chart_map_dict;
+            mci char_chart_dict;
 
-            string line;
-            while (getline(f, line))
-                for (char i : line)
-                    chart_map_dict[i] += 1;
+            char x;
+            while (f.get(x))
+                char_chart_dict[x] += 1;
 
-            vpci chart_map;
-            for (auto &x : chart_map_dict)
-                chart_map.push_back(x);
+            vpci char_chart;
+            for (auto &x : char_chart_dict)
+                char_chart.push_back(x);
 
-            return chart_map;
+            quicksort(char_chart);
+
+            return char_chart;
         }
 
     public:
@@ -86,10 +88,7 @@ namespace Huffman
                 return false;
             }
 
-            vpci chart_map = get_chart_map();
-
-            for (auto &x : chart_map)
-                cout << x.first << " " << x.second << endl;
+            vpci char_chart = get_char_chart();
 
             return true;
         }
