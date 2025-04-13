@@ -3,5 +3,6 @@
 
 // sorting
 #include "../utils/sort.h"
+#include "../utils/huffman_tree.h"
 
 #endif
