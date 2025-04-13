@@ -26,8 +26,6 @@ namespace Huffman
             for (auto &x : char_chart_dict)
                 char_chart.push_back(x);
 
-            quicksort(char_chart);
-
             return char_chart;
         }
 
@@ -88,9 +86,9 @@ namespace Huffman
                 return false;
             }
 
-            vpci char_chart = get_char_chart();
+            
 
-            return true;
+            return false;
         }
     };
 }

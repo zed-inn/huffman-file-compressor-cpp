@@ -7,6 +7,7 @@
 typedef pair<char, int> pci;
 typedef unordered_set<char> usc;
 typedef unordered_map<char, int> mci;
+typedef unordered_map<char, string> mcs;
 typedef vector<pair<char, int>> vpci;
 
 #endif
