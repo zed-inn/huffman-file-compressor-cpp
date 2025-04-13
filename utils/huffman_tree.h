@@ -9,36 +9,22 @@ public:
 
     HuffmanTree(HuffmanTree *left) : left(left) {}
     HuffmanTree(HuffmanTree *left, HuffmanTree *right) : left(left), right(right) {}
-    HuffmanTree(char value, int weight) : value(value), weight(weight) {}
+    HuffmanTree(char value, int weight) : value(value), weight(weight), left(nullptr), right(nullptr) {}
     HuffmanTree() : value('\0'), left(nullptr), right(nullptr) {}
 
-    void set_weight(int weight)
-    {
-        this->weight = weight;
-    }
+    HuffmanTree *get_left() { return this->left; }
 
-    void set_left(HuffmanTree *left)
-    {
-        this->left = left;
-    }
+    HuffmanTree *get_right() { return this->right; }
 
-    void set_right(HuffmanTree *right)
-    {
-        this->right = right;
-    }
+    void set_weight(int weight) { this->weight = weight; }
 
-    int get_weight()
-    {
-        return this->weight;
-    }
+    void set_left(HuffmanTree *left) { this->left = left; }
 
-    char get_char()
-    {
-        return this->value;
-    }
+    void set_right(HuffmanTree *right) { this->right = right; }
 
-    bool is_leaf_node()
-    {
-        return this->left == nullptr && this->right == nullptr;
-    }
+    int get_weight() { return this->weight; }
+
+    char get_char() { return this->value; }
+
+    bool is_leaf_node() { return this->left == nullptr && this->right == nullptr; }
 };

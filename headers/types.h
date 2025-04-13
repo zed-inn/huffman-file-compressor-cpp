@@ -1,6 +1,6 @@
 #include "./common.h"
-#include "./namespace.h"
 #include "./dsa.h"
+#include "./namespace.h"
 
 #ifndef TYPES_H
 #define TYPES_H
@@ -11,6 +11,6 @@ typedef unordered_map<char, int> mci;
 typedef unordered_map<char, string> mcs;
 typedef vector<pair<char, int>> vpci;
 typedef HuffmanTree hf;
-typedef vector<HuffmanTree *> vhf;
+typedef vector<hf *> vhf;
 
 #endif
