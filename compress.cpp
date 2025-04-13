@@ -2,7 +2,7 @@
 #include "./headers/common.h"
 #include "./headers/namespace.h"
 
-using namespace Huffman;
+using namespace Huffman_Compression;
 
 int main()
 {

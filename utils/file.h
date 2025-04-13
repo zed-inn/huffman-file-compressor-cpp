@@ -7,7 +7,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-namespace Huffman
+namespace Huffman_Compression
 {
     class File
     {
@@ -219,4 +219,5 @@ namespace Huffman
         }
     };
 }
+
 #endif
