@@ -166,6 +166,27 @@ namespace Huffman
             }
         }
 
+        void write_header(mcs &codes)
+        {
+            int padding = 0, total_length = 0;
+            for (auto x : codes)
+                total_length += x.second.length() + 16;
+            padding = (8 - total_length % 8) % 8;
+            total_length = (total_length + padding) / 8;
+
+            this->f_out << total_length << " " << padding << " ";
+
+            string coded = "";
+            for (int i = 0; i < padding; i++)
+                coded += "0";
+
+            for (auto x : codes)
+                coded += convert_char_2bits(x.first) + convert_char_2bits((char)x.second.length()) + x.second;
+
+            while (coded.length() >= 8)
+                this->f_out << convert_firs8_2bit(coded);
+        }
+
         bool compress()
         {
             if (!f.is_open())
@@ -183,6 +204,7 @@ namespace Huffman
 
             this->open_out();
 
+            this->write_header(coded_values);
             int padding = 0;
             {
                 for (auto x : char_count)
