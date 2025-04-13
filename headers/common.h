@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <bitset>
 #include <unordered_set>
 #include <unordered_map>
 
