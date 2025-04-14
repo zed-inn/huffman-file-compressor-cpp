@@ -10,7 +10,7 @@ public:
     HuffmanTree(HuffmanTree *left) : left(left) {}
     HuffmanTree(HuffmanTree *left, HuffmanTree *right) : left(left), right(right) {}
     HuffmanTree(char value, int weight) : value(value), weight(weight), left(nullptr), right(nullptr) {}
-    HuffmanTree() : value('\0'), left(nullptr), right(nullptr) {}
+    HuffmanTree() : left(nullptr), right(nullptr) {}
 
     HuffmanTree *get_left() { return this->left; }
 
@@ -21,6 +21,10 @@ public:
     void set_left(HuffmanTree *left) { this->left = left; }
 
     void set_right(HuffmanTree *right) { this->right = right; }
+
+    bool has_left() { return this->left != nullptr; }
+
+    bool has_right() { return this->right != nullptr; }
 
     int get_weight() { return this->weight; }
 

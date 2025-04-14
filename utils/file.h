@@ -168,28 +168,16 @@ namespace Huffman_Compression
 
         void write_header(mcs &codes)
         {
-            int padding = 0, total_length = 0;
-            for (auto x : codes)
-                total_length += x.second.length() + 16;
-            padding = (8 - total_length % 8) % 8;
-            total_length = (total_length + padding) / 8;
-
-            this->f_out << total_length << " " << padding << " ";
-
-            string coded = "";
-            for (int i = 0; i < padding; i++)
-                coded += "0";
+            int total_length = codes.size();
+            this->f_out << total_length << "\n";
 
             for (auto x : codes)
-                coded += convert_char_2bits(x.first) + convert_char_2bits((char)x.second.length()) + x.second;
-
-            while (coded.length() >= 8)
-                this->f_out << convert_firs8_2bit(coded);
+                this->f_out << x.first << " " << x.second << "\n";
         }
 
         bool compress()
         {
-            if (!f.is_open())
+            if (!this->f.is_open())
             {
                 cout << "File is not open" << endl;
                 return false;
@@ -213,6 +201,152 @@ namespace Huffman_Compression
                 padding = (8 - padding) % 8;
             }
             this->write_content(coded_values, padding);
+
+            this->close_out();
+            return false;
+        }
+    };
+}
+
+namespace Huffman_Decompression
+{
+    class File
+    {
+    private:
+        ifstream f;
+        ofstream f_out;
+        int total_chars = 0;
+        hf *hf_tree = nullptr;
+
+        mcs get_header()
+        {
+            int total_length;
+            this->f >> total_length;
+
+            mcs codes;
+
+            for (int i = 0; i < total_length; i++)
+            {
+                char ch;
+                string code;
+                this->f.get(ch);
+                this->f.get(ch);
+                this->f >> code;
+                codes[ch] = code;
+            }
+
+            return codes;
+        }
+
+    public:
+        string input_filename;
+        string output_filename;
+
+        File(string filename) : input_filename(filename)
+        {
+            auto it = filename.rfind(".");
+            if (it != string::npos)
+                filename = filename.substr(0, it);
+
+            output_filename = filename + "." + DECOMPRESSED_FILE_EXTENSION;
+        }
+
+        File(string input_filename,
+             string output_filename) : input_filename(input_filename),
+                                       output_filename(output_filename) {}
+
+        // opens the input file
+        bool open()
+        {
+            if (this->f.is_open())
+            {
+                cout << "File is already open" << endl;
+                return false;
+            }
+
+            if (this->input_filename.length() == 0)
+            {
+                cout << "No input filename" << endl;
+                return false;
+            }
+
+            this->f.open(this->input_filename);
+            return true;
+        }
+
+        // close the input file
+        bool close()
+        {
+            if (!this->f.is_open())
+            {
+                cout << "File is already close" << endl;
+                return false;
+            }
+
+            this->f.close();
+            return true;
+        }
+
+        // cleans the output file
+        void clear_out_file()
+        {
+            this->f_out.open(this->output_filename, ios::trunc);
+            this->f_out.close();
+        }
+
+        // opens the output file
+        bool open_out()
+        {
+            if (this->f_out.is_open())
+            {
+                cout << "Output File is already open" << endl;
+                return false;
+            }
+
+            if (this->output_filename.length() == 0)
+            {
+                cout << "No output filename" << endl;
+                return false;
+            }
+
+            this->clear_out_file();
+            this->f_out.open(this->output_filename, ios::app);
+            return true;
+        }
+
+        // close the output file
+        bool close_out()
+        {
+            if (!this->f_out.is_open())
+            {
+                cout << "Output File is already close" << endl;
+                return false;
+            }
+
+            this->f_out.close();
+            return true;
+        }
+
+        void write_content()
+        {
+            int padding;
+            this->f >> padding;
+        }
+
+        bool decompress()
+        {
+            if (!this->f.is_open())
+            {
+                cout << "File is not open" << endl;
+                return false;
+            }
+
+            mcs codes = this->get_header();
+            this->hf_tree = reduce_to_head(codes);
+
+            this->open_out();
+
+            this->write_content();
 
             this->close_out();
             return false;

@@ -45,6 +45,44 @@ hf *reduce_to_head(vhf &char_chart)
     }
 }
 
+hf *reduce_to_head(mcs &coded_chart)
+{
+    if (coded_chart.size() == 0)
+        return nullptr;
+
+    hf *head = new hf();
+
+    for (auto x : coded_chart)
+    {
+        hf *init = head;
+        char ch = x.first;
+        for (auto y : x.second)
+        {
+            if (y == LEFT)
+            {
+                if (!init->has_left())
+                {
+                    hf *new_left = new hf();
+                    init->set_left(new_left);
+                }
+                init = init->get_left();
+            }
+            else if (y == RIGHT)
+            {
+                if (!init->has_right())
+                {
+                    hf *new_right = new hf();
+                    init->set_right(new_right);
+                }
+                init = init->get_right();
+            }
+        }
+        init->value = ch;
+    }
+
+    return head;
+}
+
 void print_tree(hf *root)
 {
     if (!root)
