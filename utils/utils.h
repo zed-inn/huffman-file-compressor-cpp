@@ -17,3 +17,20 @@ string convert_char_2bits(char c)
 
     return binary_str;
 }
+
+string convert_int_2bits(int i)
+{
+    bitset<16> bits(i);
+    string binary_str = bits.to_string();
+
+    return binary_str;
+}
+
+int convert_16bits_2int(string &str)
+{
+    string byte = str.substr(0, 16);
+    str.erase(str.begin(), str.begin() + 16);
+
+    int byte_int = static_cast<int>(bitset<16>(byte).to_ulong());
+    return byte_int;
+}

@@ -145,13 +145,24 @@ namespace Huffman_Compression
 
         void write_header(mcs &codes)
         {
-            int total_length = codes.size();
-            this->out_write(to_string(total_length) + "\n");
+            int total_length = 0;
+            int padding = 0;
+            for (auto x : codes)
+                total_length += 8 + 16 + x.second.length();
+            padding = (8 - total_length % 8) % 8;
+            total_length = (total_length + padding) / 8;
 
-            for (auto &x : codes)
+            string code = "";
+            for (int i = 0; i < padding; i++)
+                code += "0";
+
+            this->out_write(to_string(total_length) + " " + to_string(padding) + " ");
+
+            for (auto x : codes)
             {
-                this->out_write(x.first);
-                this->out_write(" " + x.second + "\n");
+                code += convert_char_2bits(x.first) + convert_int_2bits(x.second.length()) + x.second;
+                while (code.length() >= 8)
+                    this->out_write(convert_firs8_2bit(code));
             }
         }
 
@@ -172,7 +183,6 @@ namespace Huffman_Compression
 
             char ch;
             string coded_content = this->write_content_padding(padding);
-            int count = 0;
             while (this->f.get(ch))
             {
                 coded_content += codes[ch];
@@ -180,10 +190,8 @@ namespace Huffman_Compression
                 {
                     char ch_coded = convert_firs8_2bit(coded_content);
                     this->out_write(ch_coded);
-                    ++count;
                 }
             }
-            cout << "byte written : " << count << endl;
         }
 
         void compress()
@@ -230,19 +238,31 @@ namespace Huffman_Decompression
         mcs get_header()
         {
             char ch;
-            int total_length = 0;
-            while (this->f.get(ch) && ch != '\n')
+            int total_length = 0, padding = 0;
+            while (this->f.get(ch) && ch != ' ')
                 total_length = total_length * 10 + (ch - '0');
+            this->f.get(ch);
+            padding = ch - '0';
+            this->f.get(ch);
 
             mcs codes;
+            string header = "";
 
-            for (int i = 0; i < total_length; i++)
+            for (int i = 0; i < total_length && f.get(ch); i++)
             {
-                char value;
-                string code;
-                this->f.get(value);
-                while (this->f.get(ch) && ch != '\n')
-                    code += ch;
+                string char_decoded = convert_char_2bits(ch);
+                if (i == 0)
+                    header += char_decoded.substr(padding);
+                else
+                    header += char_decoded;
+            }
+
+            while (header.length() > 0)
+            {
+                char value = convert_firs8_2bit(header);
+                int len = convert_16bits_2int(header);
+                string code = header.substr(0, len);
+                header.erase(header.begin(), header.begin() + len);
                 codes[value] = code;
             }
 
@@ -358,10 +378,8 @@ namespace Huffman_Decompression
 
             hf *arrow = this->hf_tree;
 
-            int count = 0;
             while (this->f.get(ch))
             {
-                ++count;
                 string code = convert_char_2bits(ch);
                 for (int i = padding; i < code.length(); i++)
                 {
@@ -380,8 +398,6 @@ namespace Huffman_Decompression
             }
             if (arrow->is_leaf_node())
                 this->out_write(arrow->value);
-
-            cout << "byte read : " << count << endl;
         }
 
         void decompress()
