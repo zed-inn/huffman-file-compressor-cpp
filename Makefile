@@ -1,21 +1,13 @@
 CXX=g++
 
-COMPRESS_CODE=compress.cpp
-COMPRESS_CODE_OUT=compress.exe
-DECOMPRESS_CODE=decompress.cpp
-DECOMPRESS_CODE_OUT=decompress.exe
+MAIN_CODE=main.cpp
+MAIN_CODE_OUT=huffman.exe
 
 all:
-	$(compress)
-	$(decompress)
+	$(main)
 
-compress:
-	$(CXX) $(COMPRESS_CODE) -o $(COMPRESS_CODE_OUT)
-	./$(COMPRESS_CODE_OUT)
-
-decompress:
-	$(CXX) $(DECOMPRESS_CODE) -o $(DECOMPRESS_CODE_OUT)
-	./$(DECOMPRESS_CODE_OUT)
+main:
+	$(CXX) $(MAIN_CODE) -o $(MAIN_CODE_OUT)
 
 clean:
 	del *.exe

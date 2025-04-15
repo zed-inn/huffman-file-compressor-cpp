@@ -76,6 +76,13 @@ namespace Huffman_Compression
             }
 
             this->f.open(this->input_filename);
+
+            if (this->f.fail())
+            {
+                cout << "File failed to open, check if file exists" << endl;
+                return false;
+            }
+
             return true;
         }
 
@@ -302,6 +309,13 @@ namespace Huffman_Decompression
             }
 
             this->f.open(this->input_filename, ios::binary);
+
+            if (this->f.fail())
+            {
+                cout << "File failed to open, check if file exists" << endl;
+                return false;
+            }
+
             return true;
         }
 
