@@ -14,7 +14,6 @@ namespace Huffman_Compression
     private:
         ifstream f;
         ofstream f_out;
-        int total_chars = 0;
 
         vpci get_char_count()
         {
@@ -22,10 +21,7 @@ namespace Huffman_Compression
 
             char x;
             while (this->f.get(x))
-            {
                 char_chart_dict[x] += 1;
-                ++this->total_chars;
-            }
 
             vpci char_chart;
             for (auto &x : char_chart_dict)
@@ -119,7 +115,7 @@ namespace Huffman_Compression
             }
 
             this->clear_out_file();
-            this->f_out.open(this->output_filename, ios::app);
+            this->f_out.open(this->output_filename, ios::app | ios::binary);
             return true;
         }
 
@@ -136,15 +132,32 @@ namespace Huffman_Compression
             return true;
         }
 
-        void reset()
+        void out_write(string line)
         {
-            this->close();
-            this->open();
+            for (auto x : line)
+                this->f_out.write(&x, 1);
+        }
+
+        void out_write(char ch)
+        {
+            this->f_out.write(&ch, 1);
+        }
+
+        void write_header(mcs &codes)
+        {
+            int total_length = codes.size();
+            this->out_write(to_string(total_length) + "\n");
+
+            for (auto &x : codes)
+            {
+                this->out_write(x.first);
+                this->out_write(" " + x.second + "\n");
+            }
         }
 
         string write_content_padding(int &padding)
         {
-            this->f_out << padding << "\n";
+            this->out_write(to_string(padding) + "\n");
 
             string padded_string = "";
             for (int i = 0; i < padding; i++)
@@ -154,33 +167,31 @@ namespace Huffman_Compression
 
         void write_content(mcs &codes, int padding)
         {
-            this->reset();
+            this->f.clear();
+            this->f.seekg(0);
 
             char ch;
             string coded_content = this->write_content_padding(padding);
+            int count = 0;
             while (this->f.get(ch))
             {
                 coded_content += codes[ch];
                 while (coded_content.length() >= 8)
-                    this->f_out << convert_firs8_2bit(coded_content);
+                {
+                    char ch_coded = convert_firs8_2bit(coded_content);
+                    this->out_write(ch_coded);
+                    ++count;
+                }
             }
+            cout << "byte written : " << count << endl;
         }
 
-        void write_header(mcs &codes)
-        {
-            int total_length = codes.size();
-            this->f_out << total_length << "\n";
-
-            for (auto x : codes)
-                this->f_out << x.first << " " << x.second << "\n";
-        }
-
-        bool compress()
+        void compress()
         {
             if (!this->f.is_open())
             {
                 cout << "File is not open" << endl;
-                return false;
+                return;
             }
 
             vpci char_count = this->get_char_count();
@@ -203,10 +214,9 @@ namespace Huffman_Compression
             this->write_content(coded_values, padding);
 
             this->close_out();
-            return false;
         }
     };
-}
+};
 
 namespace Huffman_Decompression
 {
@@ -215,24 +225,25 @@ namespace Huffman_Decompression
     private:
         ifstream f;
         ofstream f_out;
-        int total_chars = 0;
         hf *hf_tree = nullptr;
 
         mcs get_header()
         {
-            int total_length;
-            this->f >> total_length;
+            char ch;
+            int total_length = 0;
+            while (this->f.get(ch) && ch != '\n')
+                total_length = total_length * 10 + (ch - '0');
 
             mcs codes;
 
             for (int i = 0; i < total_length; i++)
             {
-                char ch;
+                char value;
                 string code;
-                this->f.get(ch);
-                this->f.get(ch);
-                this->f >> code;
-                codes[ch] = code;
+                this->f.get(value);
+                while (this->f.get(ch) && ch != '\n')
+                    code += ch;
+                codes[value] = code;
             }
 
             return codes;
@@ -270,7 +281,7 @@ namespace Huffman_Decompression
                 return false;
             }
 
-            this->f.open(this->input_filename);
+            this->f.open(this->input_filename, ios::binary);
             return true;
         }
 
@@ -327,18 +338,58 @@ namespace Huffman_Decompression
             return true;
         }
 
-        void write_content()
+        void out_write(string line)
         {
-            int padding;
-            this->f >> padding;
+            for (auto x : line)
+                this->f_out.write(&x, 1);
         }
 
-        bool decompress()
+        void out_write(char ch)
+        {
+            this->f_out.write(&ch, 1);
+        }
+
+        void write_content()
+        {
+            char ch;
+            this->f.get(ch);
+            int padding = ch - '0';
+            this->f.get(ch);
+
+            hf *arrow = this->hf_tree;
+
+            int count = 0;
+            while (this->f.get(ch))
+            {
+                ++count;
+                string code = convert_char_2bits(ch);
+                for (int i = padding; i < code.length(); i++)
+                {
+                    if (code[i] == LEFT)
+                        arrow = arrow->get_left();
+                    else
+                        arrow = arrow->get_right();
+
+                    if (arrow->is_leaf_node())
+                    {
+                        this->out_write(arrow->value);
+                        arrow = this->hf_tree;
+                    }
+                }
+                padding = 0;
+            }
+            if (arrow->is_leaf_node())
+                this->out_write(arrow->value);
+
+            cout << "byte read : " << count << endl;
+        }
+
+        void decompress()
         {
             if (!this->f.is_open())
             {
                 cout << "File is not open" << endl;
-                return false;
+                return;
             }
 
             mcs codes = this->get_header();
@@ -349,9 +400,8 @@ namespace Huffman_Decompression
             this->write_content();
 
             this->close_out();
-            return false;
         }
     };
-}
+};
 
 #endif
