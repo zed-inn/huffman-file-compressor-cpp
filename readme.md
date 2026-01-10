@@ -1,22 +1,43 @@
-# Huffman File Compressor
+# Huffman File Compressor (C++)
 
-A C++ implementation of Huffman coding to compress and decompress text files. This project supports both compression and decompression via command-line, handles binary I/O, and includes a custom header format for storing the Huffman code map.
+## 📌 Overview
+
+This is a **self-implemented Huffman-based file compression tool written in C++**, built to understand **lossless compression**, **binary file formats**, and **bit-level I/O**.
+
+The project implements the full compression → storage → decompression pipeline from scratch, including Huffman tree construction, custom header encoding, and exact bit-level reconstruction of the original file.
+
+No libraries doing the heavy lifting. Just algorithms, bytes, and edge cases.
+
+---
+
+## 🎯 Motivation
+
+This project was built to:
+
+- Implement **Huffman coding end-to-end**, not just the tree
+- Work directly with **binary streams and bit packing**
+- Design a **custom file format** with headers and padding
+- Understand why compression sometimes _fails_ instead of magically improving everything
+- Prioritize **correctness and reversibility** over convenience
+
+If the output decompresses to the exact original byte-for-byte, the code did its job. Anything else is a bug.
 
 ---
 
 ## 🚀 Features
 
-- Compresses plain text files using Huffman coding
-- Supports decompression using the compressed file
-- Efficient for medium to large text files (38-52% compression typical)
-- Custom header encoding for storing Huffman trees
-- Fully bit-level accurate encoding and decoding
+- Lossless compression of text files using **Huffman coding**
+- Full **decompression support** via command-line
+- Custom binary file format with embedded Huffman metadata
+- Bit-level accurate encoding and decoding
+- Typical compression ratios of **38–52%** for natural language text
+- Clean CLI interface with explicit compress/decompress modes
 
 ---
 
-## 🛠️ Build Instructions
+## 🛠️ Build
 
-Compile with `g++`:
+Compile using `g++`:
 
 ```bash
 make all
@@ -28,7 +49,7 @@ Or directly:
 g++ -std=c++17 main.cpp -o huffman
 ```
 
-> Ensure all `.h` and `.cpp` files are in proper folders as per the include paths
+> Ensure all `.h` and `.cpp` files are placed according to the include paths.
 
 ---
 
@@ -40,7 +61,13 @@ g++ -std=c++17 main.cpp -o huffman
 ./huffman -c input.txt
 ```
 
-This will generate `input.compressed`
+Output:
+
+```
+input.compressed
+```
+
+---
 
 ### Decompress a file
 
@@ -48,64 +75,93 @@ This will generate `input.compressed`
 ./huffman -d input.compressed
 ```
 
-This will generate `input.decompressed`
+Output:
 
-### Specify output filename manually
+```
+input.decompressed
+```
+
+---
+
+### Custom output filenames
 
 ```bash
-./huffman -c input.txt custom_name.huff
-./huffman -d custom_name.huff original.txt
+./huffman -c input.txt output.huff
+./huffman -d output.huff original.txt
 ```
 
 ---
 
 ## 🧪 Example
 
-Input: `sample.txt` (1200 bytes)  
-Compressed: `sample.compressed` (648 bytes)  
-Compression: ~46%
+**Input**
+
+```
+sample.txt — 1200 bytes
+```
+
+**Compressed**
+
+```
+sample.compressed — 648 bytes
+```
+
+**Compression ratio**
+
+```
+~46%
+```
 
 ---
 
 ## 📁 File Structure
 
-| File                     | Description                               |
-| ------------------------ | ----------------------------------------- |
-| `main.cpp`               | Entry point and CLI handling              |
-| `file.h`                 | Compression and decompression class logic |
-| `huffman_tree.h/.func.h` | Tree structure and generation             |
-| `utils.h`                | Binary conversion utilities               |
-| `types.h`                | Type aliases                              |
-| `common.h`               | Includes, constants                       |
+| File             | Responsibility                    |
+| ---------------- | --------------------------------- |
+| `main.cpp`       | CLI parsing and program entry     |
+| `file.h`         | Compression / decompression logic |
+| `huffman_tree.h` | Huffman tree structure            |
+| `func.h`         | Tree construction and traversal   |
+| `utils.h`        | Bit manipulation utilities        |
+| `types.h`        | Type aliases                      |
+| `common.h`       | Shared includes and constants     |
 
 ---
 
-## ⚠️ Notes
+## ⚠️ Design Notes & Limitations
 
-- For very small files, compression may increase size due to header overhead
-- Compressed files are binary — do not edit them manually
-- Padding is handled internally and trimmed correctly during decompression
-
----
-
-## 📈 Compression Ratios Observed
-
-| File Type               | Original Size | Compressed | Compression %   |
-| ----------------------- | ------------- | ---------- | --------------- |
-| Repetitive ("aaaaa...") | 99 bytes      | 12 bytes   | ~88%            |
-| Natural English text    | 1.2 KB        | 650 B      | ~46%            |
-| ASCII random            | 300 B         | 310 B      | -3% (increased) |
+- Very small files may **increase in size** due to header overhead
+- Compressed output is binary — manual edits will corrupt it
+- Padding bits are tracked and trimmed correctly during decompression
+- Designed for **clarity and correctness**, not maximum throughput
 
 ---
 
-## ✅ To Do / Improvements
+## 📈 Observed Compression Ratios
 
-- Add support for raw/uncompressed fallback when compression fails
-- Compress the header using further encoding
-- Implement block-based Huffman for large files
+| Input Type           | Original | Compressed | Result         |
+| -------------------- | -------- | ---------- | -------------- |
+| Highly repetitive    | 99 B     | 12 B       | ~88%           |
+| Natural English text | 1.2 KB   | 650 B      | ~46%           |
+| Random ASCII         | 300 B    | 310 B      | -3% (expected) |
+
+Negative compression is not a bug — it’s reality.
 
 ---
 
-## 🧑 Author
+## 🔧 Possible Improvements
 
-Built with love by Zed 🙌
+- Skip compression when output would be larger
+- Compress header metadata
+- Block-based Huffman encoding for very large files
+- Add binary file support beyond plain text
+
+---
+
+## 🧠 What This Project Demonstrates
+
+- Solid understanding of **Huffman coding**
+- Bit-level binary I/O in C++
+- Custom file format design
+- Edge-case handling in compression algorithms
+- Focus on correctness over hype
